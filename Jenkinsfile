@@ -42,24 +42,28 @@ pipeline {
                 branch 'dev'
                 beforeAgent true
             }
-	        stages {
-		        stage('Node_94_34') {
-                    agent {
-                        node {
-                            label 'Node_94_34'
-                            customWorkspace '/data1/jenkins/workspace/test_spring_premetheus-dev'
-                        }
+            parallel {
+                stage('TestT') {
+        	        stages {
+        		        stage('Node_94_34') {
+                            agent {
+                                node {
+                                    label 'Node_94_34'
+                                    customWorkspace '/data1/jenkins/workspace/test_spring_premetheus-dev'
+                                }
+                            }
+                            environment {
+                                REPO_PATH = '/data1/jenkins/.m2'
+                                DATA_PATH = '/data1/jenkins/test_spring_premetheus-dev'
+                                NODE_NAME = 'Node_94_34'
+                                VERSION   = 'test_spring_premetheus-dev'
+                            }
+                            steps {
+                                deploy()
+                            }
+        	            }
                     }
-                    environment {
-                        REPO_PATH = '/data1/jenkins/.m2'
-                        DATA_PATH = '/data1/jenkins/test_spring_premetheus-dev'
-                        NODE_NAME = 'Node_94_34'
-                        VERSION   = 'test_spring_premetheus-dev'
-                    }
-                    steps {
-                        deploy()
-                    }
-	            }
+                }
             }
         }
         stage('Deploy: Production') {
@@ -67,29 +71,33 @@ pipeline {
                 branch 'main'
                 beforeAgent true
             }
-            stages {
-	            stage('Node_94_34') {
-	                agent {
-	                    node {
-	                        label 'Node_94_34'
-	                        customWorkspace '/data1/jenkins/workspace/test_spring_premetheus-prod'
-	                    }
-	                }
-	                environment {
-	                    REPO_PATH = '/data1/jenkins/.m2'
-	                    DATA_PATH = '/data1/jenkins/test_spring_premetheus-prod'
-	                    NODE_NAME = 'Node_94_34'
-	                    VERSION   = 'test_spring_premetheus-prod'
-	                }
-	                steps {
-	                    deploy()
-	                }
-	            }
-	        }
+            parallel {
+                stage('TestT') {
+                    stages {
+        	            stage('Node_94_34') {
+        	                agent {
+        	                    node {
+        	                        label 'Node_94_34'
+        	                        customWorkspace '/data1/jenkins/workspace/test_spring_premetheus-prod'
+        	                    }
+        	                }
+        	                environment {
+        	                    REPO_PATH = '/data1/jenkins/.m2'
+        	                    DATA_PATH = '/data1/jenkins/test_spring_premetheus-prod'
+        	                    NODE_NAME = 'Node_94_34'
+        	                    VERSION   = 'test_spring_premetheus-prod'
+        	                    PORT      = 8100
+        	                }
+        	                steps {
+        	                    deploy()
+        	                }
+        	            }
+        	        }
+                }
+            }
         }
     }
 }
-
 void deploy() {
     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
         withCredentials([usernamePassword(credentialsId: 'hub.docker.com', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
