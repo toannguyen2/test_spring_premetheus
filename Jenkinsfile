@@ -47,12 +47,12 @@ pipeline {
                     agent {
                         node {
                             label 'Node_94_34'
-                            customWorkspace '/data/test/jenkins/workspace/test_spring_premetheus-dev'
+                            customWorkspace '/data1/jenkins/workspace/test_spring_premetheus-dev'
                         }
                     }
                     environment {
-                        REPO_PATH = '/data/jenkins/.m2'
-                        DATA_PATH = '/data/jenkins/test_spring_premetheus-dev'
+                        REPO_PATH = '/data1/jenkins/.m2'
+                        DATA_PATH = '/data1/jenkins/test_spring_premetheus-dev'
                         NODE_NAME = 'Node_94_34'
                         VERSION   = 'test_spring_premetheus-dev'
                     }
@@ -72,7 +72,7 @@ pipeline {
 	                agent {
 	                    node {
 	                        label 'Node_94_34'
-	                        customWorkspace '/data1/test/jenkins/workspace/test_spring_premetheus-prod'
+	                        customWorkspace '/data1/jenkins/workspace/test_spring_premetheus-prod'
 	                    }
 	                }
 	                environment {
