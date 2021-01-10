@@ -1,0 +1,31 @@
+version: "3"
+services:
+   builder:
+      image: "${BRANCH_NAME:-main}"
+      volumes:
+         - ${REPO_PATH}:/root/.m2
+         - ${DATA_PATH}/target:/deploy/application/target
+      networks:
+         - test_spring_premetheus
+   app:
+      build:
+         context: ./deploy
+      depends_on:
+         - builder
+      restart: on-failure
+      volumes:
+         - ${REPO_PATH}:/root/.m2
+         - ${DATA_PATH}/target:/deploy/application/target
+         - ${DATA_PATH}/Data:/deploy/application/Data
+         - ${DATA_PATH}/logs:/deploy/application/logs
+      environment:
+         - NODE_NAME=${NODE_NAME:-localhost}
+         - SETTINGS=${SETTINGS}
+         - VERSION=${VERSION:-undefined}
+      ports:
+         - "${PORT:-8000}:${PORT:-8100}"
+      networks:
+         - test_spring_premetheus
+networks:
+   test_spring_premetheus:
+      external: true

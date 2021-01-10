@@ -1,0 +1,31 @@
+global:
+  scrape_interval:     15s # Scrapes targets every 15 seconds.
+  evaluation_interval: 15s # Evaluates the rules every 15 seconds.
+
+# Load rules once and periodically evaluate them
+rule_files:
+# - "first.rules"
+# - "second.rules"
+
+# The scrape configuration containing exactly one endpoint
+scrape_configs:
+  # The job name is added as a label
+  - job_name: 'prometheus'
+
+    # scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+
+    # metrics_path default is '/metrics'
+    # scheme defaults to 'http'.
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'spring-boot-app'
+
+    # Override the default and scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+
+    metrics_path: '/actuator/prometheus'
+
+    static_configs:
+      - targets: ['192.168.99.101:8080'] #docker port for Prometheus
