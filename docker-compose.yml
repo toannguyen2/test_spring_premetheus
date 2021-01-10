@@ -1,7 +1,7 @@
 version: "3"
 services:
    builder:
-      image: "030399/test_spring_premetheus::${BRANCH_NAME:-main}"
+      image: "030399/test_spring_premetheus:${BRANCH_NAME:main}"
       volumes:
          - ${REPO_PATH}:/root/.m2
          - ${DATA_PATH}/target:/deploy/application/target
@@ -16,8 +16,6 @@ services:
       volumes:
          - ${REPO_PATH}:/root/.m2
          - ${DATA_PATH}/target:/deploy/application/target
-         - ${DATA_PATH}/Data:/deploy/application/Data
-         - ${DATA_PATH}/logs:/deploy/application/logs
       environment:
          - NODE_NAME=${NODE_NAME:-localhost}
          - VERSION=${VERSION:-undefined}
