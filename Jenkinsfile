@@ -105,8 +105,9 @@ void deploy() {
         }
         sh 'docker pull 030399/test_spring_premetheus:$BRANCH_NAME'
         sh 'docker network create --driver=bridge --subnet=172.29.1.0/24 test_spring_premetheus || exit 0'
-        sh 'docker-compose up --build builder && docker-compose up --build -d --force-recreate app'
-        
+//         sh 'docker-compose up --build builder && docker-compose up --build -d --force-recreate app'
+        sh 'docker-compose up --build -d builder && docker-compose up --build -d --force-recreate app'
+
         sh 'docker system prune -f'
         sh 'sleep 10s'
 	}
