@@ -19,7 +19,7 @@ pipeline {
             post {
                 always {
                 	sh 'rm -rf reports'
-                	sh 'docker cp test_spring_premetheus-$BRANCH_NAME-build:/deploy/application/target/surefire-reports reports'
+//                 	sh 'docker cp test_spring_premetheus-$BRANCH_NAME-build:/deploy/application/target/surefire-reports reports'
                 	junit 'reports/*.xml'
                 }
 				cleanup {
