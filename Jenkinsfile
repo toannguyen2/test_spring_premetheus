@@ -18,7 +18,7 @@ pipeline {
             }
             post {
                 always {
-                	sh 'del reports'
+                	sh 'rm -rf reports'
                 	sh 'docker cp test_spring_premetheus-$BRANCH_NAME-test-container:/deploy/application/target/surefire-reports reports'
                 	junit 'reports/*.xml'
                 }
@@ -30,7 +30,11 @@ pipeline {
         }
         stage('Dist') {
             steps {
-                echo 'Dist...'
+                withCredentials([usernamePassword(credentialsId: 'hub.docker.com', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                  sh "docker login --username $USERNAME --password $PASSWORD"
+                }
+                sh 'docker tag kinghub-comment-$BRANCH_NAME-build 030399/test_spring_premetheus:$BRANCH_NAME'
+                sh 'docker push 030399/test_spring_premetheus:$BRANCH_NAME'
             }
         }
         stage('Deploy: Development') {
@@ -88,10 +92,14 @@ pipeline {
 
 void deploy() {
     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-	    sh 'docker network create --driver=bridge --subnet=172.29.1.0/24 test_spring_premetheus || exit 0'
-	    sh 'docker-compose up --build builder && docker-compose up --build -d --force-recreate app'
-
-		sh 'docker system prune -f'
-		sh 'sleep 10s'
+        withCredentials([usernamePassword(credentialsId: 'hub.docker.com', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+            sh "docker login --username $USERNAME --password $PASSWORD"
+        }
+        sh 'docker pull 030399/test_spring_premetheus:$BRANCH_NAME'
+        sh 'docker network create --driver=bridge --subnet=172.29.1.0/24 test_spring_premetheus || exit 0'
+        sh 'docker-compose up --build builder && docker-compose up --build -d --force-recreate app'
+        
+        sh 'docker system prune -f'
+        sh 'sleep 10s'
 	}
 }
