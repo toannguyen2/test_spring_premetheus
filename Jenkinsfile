@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'test_spring_premetheus_build' }
     stages {
     	stage('Build') {
     		steps {
@@ -64,23 +64,24 @@ pipeline {
                 beforeAgent true
             }
             stages {
-            stage('Node_94_34') {
-                agent {
-            		node {
-            		    label 'Node_94_34'
-            		    customWorkspace '/data1/test/jenkins/workspace/test_spring_premetheus-prod'
-            		}
-                }
-            	environment {
-            	    REPO_PATH = '/data1/jenkins/.m2'
-            		DATA_PATH = '/data1/jenkins/test_spring_premetheus-prod'
-            		NODE_NAME = 'Node_94_34'
-            		VERSION   = 'test_spring_premetheus-prod'
-            	}
-            	steps {
-            		deploy()
-            	}
-            }
+	            stage('Node_94_34') {
+	                agent {
+	                    node {
+	                        label 'Node_94_34'
+	                        customWorkspace '/data1/test/jenkins/workspace/test_spring_premetheus-prod'
+	                    }
+	                }
+	                environment {
+	                    REPO_PATH = '/data1/jenkins/.m2'
+	                    DATA_PATH = '/data1/jenkins/test_spring_premetheus-prod'
+	                    NODE_NAME = 'Node_94_34'
+	                    VERSION   = 'test_spring_premetheus-prod'
+	                }
+	                steps {
+	                    deploy()
+	                }
+	            }
+	        }
         }
     }
 }
