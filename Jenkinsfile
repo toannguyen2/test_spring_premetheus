@@ -12,32 +12,32 @@ pipeline {
     			sh 'docker build -t test_spring_premetheus-$BRANCH_NAME-build .'
     		}
     	}
-//         stage('Cleanup') {
-//             steps {
-//                 sh 'docker system prune -f'
-//             }
-//         }
-    	stage('Test') {
+        stage('Cleanup') {
             steps {
-            	sh '''
-					docker run $HOSTS \
-						--name test_spring_premetheus-$BRANCH_NAME-build \
-						--volume=/data/jenkins/.m2:/root/.m2 \
-						test_spring_premetheus-$BRANCH_NAME-build -Dmaven.test.skip=false
-				'''
-            }
-            post {
-                always {
-                	sh 'rm -rf reports'
-                	sh 'docker cp test_spring_premetheus-$BRANCH_NAME-build:/deploy/application/target/surefire-reports reports'
-                	junit 'reports/*.xml'
-                }
-				cleanup {
-					sh 'docker rm --force test_spring_premetheus-$BRANCH_NAME-build || exit 0'
-					sh 'docker system prune -f'
-				}
+                sh 'docker system prune -f'
             }
         }
+//     	stage('Test') {
+//             steps {
+//             	sh '''
+// 					docker run $HOSTS \
+// 						--name test_spring_premetheus-$BRANCH_NAME-build \
+// 						--volume=/data/jenkins/.m2:/root/.m2 \
+// 						test_spring_premetheus-$BRANCH_NAME-build -Dmaven.test.skip=false
+// 				'''
+//             }
+//             post {
+//                 always {
+//                 	sh 'rm -rf reports'
+//                 	sh 'docker cp test_spring_premetheus-$BRANCH_NAME-build:/deploy/application/target/surefire-reports reports'
+//                 	junit 'reports/*.xml'
+//                 }
+// 				cleanup {
+// 					sh 'docker rm --force test_spring_premetheus-$BRANCH_NAME-build || exit 0'
+// 					sh 'docker system prune -f'
+// 				}
+//             }
+//         }
         stage('Dist') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'hub.docker.com', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
