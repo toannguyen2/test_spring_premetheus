@@ -7,11 +7,9 @@ pipeline {
     			sh 'docker build -t test_spring_premetheus-$BRANCH_NAME-build .'
     		}
     	}
-    	stage('Cleanup') {
-            post {
-                cleanup {
-        			sh 'docker system prune -f'
-        		}
+        stage('Cleanup') {
+            steps {
+                sh 'docker system prune -f'
             }
         }
 //     	stage('Test') {
