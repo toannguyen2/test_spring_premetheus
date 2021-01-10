@@ -23,6 +23,8 @@ services:
          - "${PORT:-8000}:${PORT:-8100}"
       networks:
          - test_spring_premetheus
+      extra_hosts:
+         - node9434:172.18.59.42
 networks:
    test_spring_premetheus:
       external: true
